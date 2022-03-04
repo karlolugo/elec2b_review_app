@@ -95,6 +95,34 @@ class _SafeCrackerViewState extends State<SafeCrackerView> {
     );
   }
 
+  unlockSafe() {
+    if (checkCombination()) {
+      setState(() {
+        isUnlocked == true;
+        feedback = "You unlocked the safe!";
+      });
+    } else {
+      setState(() {
+        isUnlocked == false;
+        feedback = "Wrong combination, try again!";
+      });
+    }
+  }
+
+  bool checkCombination() {
+    String theCurrentValue = convertValuesToComparableString(values);
+    bool isUnlocked = (theCurrentValue == combination);
+    return isUnlocked;
+  }
+
+  String convertValuesToComparableString(List<int> val) {
+    String temp = "";
+    for (int v in val) {
+      temp += "$v";
+    }
+    return temp;
+  }
+
   sumOfAllValues(List<int> list) {
     var temp = 0;
     // list.forEach((val) {temp+=val; });
