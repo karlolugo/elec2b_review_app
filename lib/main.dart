@@ -1,3 +1,5 @@
+import 'package:elec2b_review/safe_cracker_widgets/safe_dial.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -14,58 +16,90 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(),
+      home: const SafeCrackerView(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+class SafeCrackerView extends StatefulWidget {
+  const SafeCrackerView({Key? key}) : super(key: key);
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<SafeCrackerView> createState() => _SafeCrackerViewState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  List<int> values = [0,0,0,0,0];
+class _SafeCrackerViewState extends State<SafeCrackerView> {
+  List<int> values = [0, 0, 0];
+  String combination = "420";
+  String feedback = '';
+  bool isUnlocked = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.lightBlue.shade50,
       appBar: AppBar(
-        title: const Text("Elec2b_Review"),
-      ),
-      body: Column(children: [
-        for (int i = 0; i < values.length; i++)
-          IncrementalNumberHolderStl(
-            startingValue: values[i],
-            onIncrement: () {
-              setState(() {
-                values[i]++;
-              });
-            },
-            onDecrement: (){
-              setState(() {
-                values[i]--;
-              });
-            },
-          ),
-        const Text("This is the total of all the values."),
-        GestureDetector(
-          onTap: (){setState(() {
-            values = [0,0,0,0,0];
-          });},
-          child: NumberHolder(
-            content: sumOfAllValues(values),
-          ),
+        title: const Text(
+          "Safe Cracker",
         ),
-      ]),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+                isUnlocked
+                    ? CupertinoIcons.lock_open_fill
+                    : CupertinoIcons.lock_fill,
+                size: 100,
+                color: Colors.blueGrey),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              height: 120,
+              child:
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                for (int i = 0; i < values.length; i++)
+                  SafeDial(
+                    startingValue: values[i],
+                    onIncrement: () {
+                      setState(() {
+                        values[i]++;
+                      });
+                    },
+                    onDecrement: () {
+                      setState(() {
+                        values[i]--;
+                      });
+                    },
+                  ),
+              ]),
+            ),
+            if (feedback.isNotEmpty)
+              Text(
+                feedback,
+                style: const TextStyle(color: Colors.red),
+              ),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 15),
+              child: TextButton(
+                onPressed: unlockSafe(),
+                child: Container(
+                  padding: const EdgeInsets.all(37),
+                  color: Colors.blueGrey,
+                  child: const Text("Open the safe",
+                      style: TextStyle(color: Colors.white)),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
   sumOfAllValues(List<int> list) {
     var temp = 0;
     // list.forEach((val) {temp+=val; });
-    for(int i=0; i<list.length; i++){
-      temp+=list[i];
+    for (int i = 0; i < list.length; i++) {
+      temp += list[i];
     }
     // for (int number in list) {
     //   temp += number;
@@ -90,47 +124,6 @@ class NumberHolder extends StatelessWidget {
           "$content",
           textAlign: TextAlign.center,
         ),
-      ),
-    );
-  }
-}
-
-class IncrementalNumberHolderStl extends StatelessWidget {
-  final int startingValue;
-  final Function()? onIncrement;
-  final Function()? onDecrement;
-  const IncrementalNumberHolderStl(
-      {Key? key,
-      required this.startingValue,
-      this.onIncrement,
-      this.onDecrement})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      padding: const EdgeInsets.all(4),
-      width: double.infinity,
-      color: Colors.orangeAccent,
-      constraints: const BoxConstraints(minHeight: 60),
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: onDecrement,
-            icon: const Icon(Icons.chevron_left),
-          ),
-          Expanded(
-            child: Text(
-              "$startingValue",
-              textAlign: TextAlign.center,
-            ),
-          ),
-          IconButton(
-            onPressed: onIncrement,
-            icon: const Icon(Icons.chevron_right),
-          ),
-        ],
       ),
     );
   }
